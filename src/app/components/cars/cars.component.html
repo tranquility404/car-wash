@@ -1,0 +1,81 @@
+<div class="cars-container"></div>
+<div class="cars-header">
+    <h1><i class="fas fa-car"></i> My Garage</h1>
+    <p>Manage your registered vehicles</p>
+    <button class="btn-add" (click)="showAddCarForm = !showAddCarForm">
+        {{ showAddCarForm ? 'Cancel' : '+ Add New Car' }}
+    </button>
+</div>
+
+<div class="add-car-form" *ngIf="showAddCarForm">
+    <div class="form-card">
+        <h2>Add New Ride</h2>
+        <form [formGroup]="addCarForm" (ngSubmit)="addNewRideToGarage()">
+            <div class="form-group">
+                <label for="carName">Car Name</label>
+                <input type="text" id="carName" formControlName="carName" class="form-control"
+                    placeholder="Toyota Camry, Honda Civic, etc.">
+                <div class="error-message"
+                    *ngIf="addCarForm.get('carName')?.invalid && addCarForm.get('carName')?.touched">
+                    Car name is required
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model/Year</label>
+                <input type="text" id="model" formControlName="model" class="form-control"
+                    placeholder="2022, 2023, etc.">
+                <div class="error-message" *ngIf="addCarForm.get('model')?.invalid && addCarForm.get('model')?.touched">
+                    Model is required
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="licensePlate">License Plate</label>
+                <input type="text" id="licensePlate" formControlName="licensePlate" class="form-control"
+                    placeholder="ABC-123">
+                <div class="error-message"
+                    *ngIf="addCarForm.get('licensePlate')?.invalid && addCarForm.get('licensePlate')?.touched">
+                    License plate is required
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" [disabled]="addCarForm.invalid || isAddingCar">
+                <span *ngIf="isAddingCar">Adding Car...</span>
+                <span *ngIf="!isAddingCar">Add to Garage</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="cars-grid" *ngIf="myAwesomeGarage.length > 0; else noVehicles">
+    <div class="car-card" *ngFor="let beautifulRide of myAwesomeGarage">
+        <div class="car-header">
+            <h3>{{ beautifulRide.carName }}</h3>
+            <button class="btn-delete" (click)="removeRideFromGarage(beautifulRide.id!)" [disabled]="isDeletingCar">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <div class="car-details">
+            <div class="detail-item">
+                <span class="detail-label">Model/Year:</span>
+                <span class="detail-value">{{ beautifulRide.model }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">License:</span>
+                <span class="detail-value">{{ beautifulRide.licensePlate }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #noVehicles>
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-car fa-3x"></i></div>
+        <h2>No vehicles in your garage yet!</h2>
+        <p>Add your first car to get started with our car wash services.</p>
+        <button class="btn-primary" (click)="showAddCarForm = true" *ngIf="!showAddCarForm">
+            Add Your First Car
+        </button>
+    </div>
+</ng-template>

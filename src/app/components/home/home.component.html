@@ -1,0 +1,58 @@
+<div class="dashboard-container">
+    <div class="welcome-header">
+        <h1>Welcome Back! 👋</h1>
+        <p>Here's what's happening with your account</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🚗</div>
+            <div class="stat-info">
+                <h3>{{ totalRidesInGarage }}</h3>
+                <p>Cars Registered</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-info">
+                <h3>{{ totalShoppingCarts }}</h3>
+                <p>Active Carts</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+                <h3>{{ totalOrdersEverMade }}</h3>
+                <p>Total Orders</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+                <h3>{{ pendingOrdersCount }}</h3>
+                <p>Pending Orders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-activity">
+        <h2>Recent Activity</h2>
+        <div class="activity-list" *ngIf="recentOrderHistory.length > 0; else noActivity">
+            <div class="activity-item" *ngFor="let order of recentOrderHistory.slice(0, 5)">
+                <div class="activity-icon">📋</div>
+                <div class="activity-details">
+                    <h4>Order #{{ order.id }}</h4>
+                    <p>Status: {{ order.status }} | Amount: ${{ order.totalAmount }}</p>
+                    <small>{{ order.createdAt | date }}</small>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #noActivity>
+            <p class="no-activity">No recent activity found. Time to wash some cars! 🧽</p>
+        </ng-template>
+    </div>
+</div>

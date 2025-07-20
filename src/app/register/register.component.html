@@ -1,0 +1,56 @@
+<!-- src/app/register/register.component.html -->
+<div class="register-container">
+    <h2>Register</h2>
+  
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" name="username" [(ngModel)]="user.username" required />
+
+      </div>
+  
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" [(ngModel)]="user.email" required />
+      </div>
+  
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" name="password" [(ngModel)]="user.password" required />
+      </div>
+      <div class="form-group">
+  <label>Role:</label>
+  <select [(ngModel)]="user.role" name="role" required>
+    <option value="">--Select Role--</option>
+    <option value="ADMIN">Admin</option>
+    <option value="USER">User</option>
+    <option value="WASHER">Washer</option>
+  </select>
+</div>
+
+      <!-- <div class="form-group">
+        <label>Role:</label>
+        <input type="role" name="role" [(ngModel)]="user.role" required />
+        
+      </div> -->
+  
+      <button type="submit" [disabled]="!registerForm.valid">Register</button>
+    </form>
+  
+    <p class="link-text">
+      Already have an account? <a routerLink="/login">Login</a>
+    </p>
+  </div>
+  
+
+<!-- <div class="register-form">
+    <h2>Register</h2>
+    <form (ngSubmit)="onSubmit()">
+      <input type="text" placeholder="Username" [(ngModel)]="user.username" name="username" required />
+      <input type="email" placeholder="Email" [(ngModel)]="user.email" name="email" required />
+      <input type="password" placeholder="Password" [(ngModel)]="user.password" name="password" required />
+      <button type="submit">Register</button>
+    </form>
+  </div> -->
+  
+

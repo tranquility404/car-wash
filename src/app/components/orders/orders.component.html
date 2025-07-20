@@ -1,0 +1,164 @@
+<div class="orders-container">
+    <div class="orders-header">
+        <h1><i class="fas fa-receipt"></i> My Orders</h1>
+        <p>Track and manage your car wash orders</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-list-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ myOrderHistory.length }}</h3>
+                <p>Total Orders</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ pendingOrders.length }}</h3>
+                <p>Active Orders</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon completed">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ completedOrders.length }}</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search orders..." [(ngModel)]="searchQuery" (input)="onSearchChange()"
+                class="search-input">
+        </div>
+
+        <div class="status-filters">
+            <button *ngFor="let option of statusOptions" (click)="onStatusFilterChange(option.value)"
+                [class.active]="selectedStatus === option.value" class="filter-btn">
+                <i [class]="option.icon"></i>
+                <span class="filter-label">{{ option.label }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading your orders...</p>
+    </div>
+
+    <!-- Orders List -->
+    <div *ngIf="!isLoading" class="orders-content">
+        <div *ngIf="filteredOrders.length === 0" class="no-orders">
+            <i class="fas fa-inbox"></i>
+            <h3>No orders found</h3>
+            <p *ngIf="searchQuery || selectedStatus !== 'all'">Try adjusting your filters or search terms</p>
+            <p *ngIf="!searchQuery && selectedStatus === 'all'">You haven't placed any orders yet</p>
+        </div>
+
+        <div *ngIf="filteredOrders.length > 0" class="orders-list">
+            <div *ngFor="let order of getPaginatedOrders()" class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>Order #{{ order.id }}</h3>
+                        <span [class]="getStatusClass(order.status)" class="status-badge">
+                            <i [class]="getStatusIcon(order.status)"></i>
+                            {{ getStatusLabel(order.status) }}
+                        </span>
+                    </div>
+                    <div class="order-date">
+                        <small>{{ order.orderDate | date:'short' }}</small>
+                    </div>
+                </div>
+
+                <div class="order-details">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Cart #{{ order.cartId }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Washer #{{ order.washerId }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{ order.scheduledDate | date:'short' }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-bolt" *ngIf="order.orderNow"></i>
+                            <i class="fas fa-clock" *ngIf="!order.orderNow"></i>
+                            <span>{{ order.orderNow ? 'Order Now' : 'Scheduled' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    <button class="btn-primary" (click)="viewOrderDetails(order)">
+                        <i class="fas fa-eye"></i>
+                        Details
+                    </button>
+
+                    <button *ngIf="order.status === 'WASHING'" class="btn-info" (click)="trackOrder(order)">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Track
+                    </button>
+
+                    <button *ngIf="order.status === 'PENDING'" class="btn-warning" (click)="cancelOrder(order)">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+
+                    <button *ngIf="order.status === 'COMPLETED'" class="btn-secondary" (click)="reorderOrder(order)">
+                        <i class="fas fa-redo"></i>
+                        Reorder
+                    </button>
+
+                    <button *ngIf="order.paymentUrl && order.status === 'PENDING'" class="btn-success"
+                        (click)="makePayment(order)">
+                        <i class="fas fa-credit-card"></i>
+                        Pay
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="pagination">
+            <button class="pagination-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <button *ngFor="let page of [].constructor(totalPages); let i = index" class="pagination-btn"
+                [class.active]="currentPage === i + 1" (click)="goToPage(i + 1)">
+                {{ i + 1 }}
+            </button>
+
+            <button class="pagination-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <p>
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+                {{ Math.min(currentPage * itemsPerPage, filteredOrders.length) }}
+                of {{ filteredOrders.length }} orders
+            </p>
+        </div>
+    </div>
+</div>

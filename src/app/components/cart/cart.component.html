@@ -1,0 +1,97 @@
+<div class="carts-container">
+    <div class="carts-header">
+        <h1><i class="fas fa-shopping-cart"></i> Shopping Carts</h1>
+        <p>Manage your car wash service carts</p>
+        <button class="btn-create" (click)="createNewShoppingCart()">
+            + Create New Cart
+        </button>
+    </div>
+
+    <div class="carts-grid" *ngIf="myShoppingCarts.length > 0; else noCartMessage">
+        <div class="cart-card" *ngFor="let shoppingCart of myShoppingCarts">
+            <div class="cart-header">
+                <h3>Cart #{{ shoppingCart.id }}</h3>
+                <div class="cart-actions">
+                    <button class="btn-add-item" (click)="toggleAddItemForm(shoppingCart.id!)">
+                        + Add Item
+                    </button>
+                    <button class="btn-delete" (click)="deleteShoppingCart(shoppingCart.id!)"
+                        [disabled]="isDeletingCart">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="add-item-form" *ngIf="showAddItemForm === shoppingCart.id">
+                <form [formGroup]="addItemForm" (ngSubmit)="addItemToShoppingCart(shoppingCart.id!)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Select Car</label>
+                            <select formControlName="carId" class="form-control">
+                                <option value="">Choose a car...</option>
+                                <option *ngFor="let car of myAwesomeGarage" [value]="car.id">
+                                    {{ car.carName }} {{ car.model }} - {{ car.licensePlate }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Wash Package ID</label>
+                            <input type="number" formControlName="washPackageId" class="form-control" placeholder="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Add-ons (comma separated)</label>
+                        <input type="text" formControlName="addons" class="form-control"
+                            placeholder="wax, vacuum, air freshener">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" [disabled]="addItemForm.invalid || isAddingItem">
+                            <span *ngIf="isAddingItem">Adding...</span>
+                            <span *ngIf="!isAddingItem">Add Item</span>
+                        </button>
+                        <button type="button" class="btn-cancel" (click)="showAddItemForm = null">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="cart-items">
+                <div class="items-header" (click)="loadCartItems(shoppingCart.id!)">
+                    <span>Items ({{ getCartItemsCount(shoppingCart.id!) }})</span>
+                    <span class="toggle-icon">{{ expandedCart === shoppingCart.id ? '▼' : '▶' }}</span>
+                </div>
+
+                <div class="items-list" *ngIf="expandedCart === shoppingCart.id">
+                    <div class="item-card" *ngFor="let item of cartItems[shoppingCart.id!] || []">
+                        <div class="item-info">
+                            <h4>Car ID: {{ item.carId }}</h4>
+                            <p>Package: {{ item.washPackageId }}</p>
+                            <p *ngIf="item.addons">Add-ons: {{ item.addons }}</p>
+                        </div>
+                        <button class="btn-remove-item" (click)="removeItemFromCart(shoppingCart.id!, item.id!)"
+                            [disabled]="isRemovingItem">
+                            Remove
+                        </button>
+                    </div>
+
+                    <div class="empty-cart" *ngIf="!cartItems[shoppingCart.id!]?.length">
+                        <p>This cart is emptier than my wallet! 💸</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noCartMessage>
+        <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-shopping-cart fa-3x"></i></div>
+            <h2>No shopping carts yet!</h2>
+            <p>Create your first cart to start building your car wash service orders.</p>
+            <button class="btn-primary" (click)="createNewShoppingCart()">
+                Create First Cart
+            </button>
+        </div>
+    </ng-template>
+</div>
