@@ -83,7 +83,7 @@ export class AuthService {
   }
 
   hasRole(role: string): boolean {
-    return role == "ADMIN"
+    return role == "WASHER"
     
     // const userRole = this.getRole();
     // return userRole === role;

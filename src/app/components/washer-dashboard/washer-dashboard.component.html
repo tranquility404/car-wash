@@ -1,57 +1,235 @@
 <div class="washer-dashboard">
-    <div class="dashboard-header">
-        <h1>Washer Dashboard</h1>
-        <p>Manage your car washing assignments</p>
+    <!-- Data Mode Toggle -->
+    <div class="mode-toggle">
+        <div class="mode-indicator">
+            <span class="mode-badge" [class.demo]="isDemoMode" [class.real]="!isDemoMode">
+                <i class="fas" [class.fa-flask]="isDemoMode" [class.fa-database]="!isDemoMode"></i>
+                {{ isDemoMode ? 'Demo Mode' : 'Live Data' }}
+            </span>
+            <button class="toggle-btn" (click)="toggleDataMode()" title="Switch data mode">
+                <i class="fas fa-sync-alt"></i>
+                Switch to {{ isDemoMode ? 'Live Data' : 'Demo Mode' }}
+            </button>
+        </div>
+    </div>
+
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="dashboard-title">Washer Dashboard</h1>
+                <p class="dashboard-subtitle">Manage your car wash orders efficiently</p>
+            </div>
+            <button class="refresh-btn" (click)="refreshOrders()" [disabled]="isLoading">
+                <svg class="refresh-icon" [class.spinning]="isLoading" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                    <path d="M21 3v5h-5"></path>
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                    <path d="M3 21v-5h5"></path>
+                </svg>
+                {{ isLoading ? 'Refreshing...' : 'Refresh' }}
+            </button>
+        </div>
+    </header>
+
+    <!-- Statistics Cards -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fas fa-list-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ totalOrders }}</h3>
+                <p>Total Orders</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ pendingCount }}</h3>
+                <p>Pending</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon accepted">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ acceptedCount }}</h3>
+                <p>Accepted</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon completed">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ completedCount }}</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-controls">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search orders..." [(ngModel)]="searchTerm"
+                (input)="onSearchChange()">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+        </div>
+
+        <div class="filter-container">
+            <div class="custom-select" [class.active]="isDropdownOpen">
+                <div class="select-trigger" (click)="toggleDropdown()">
+                    <span class="selected-option">
+                        <i class="fas" [class]="getFilterIcon(selectedFilter)"></i>
+                        {{ getFilterLabel(selectedFilter) }}
+                    </span>
+                    <svg class="dropdown-arrow" [class.rotated]="isDropdownOpen" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </div>
+                <div class="select-options" [class.show]="isDropdownOpen">
+                    <div class="option-item" [class.selected]="selectedFilter === 'all'" (click)="selectFilter('all')">
+                        <i class="fas fa-list-alt"></i>
+                        <span>All Orders</span>
+                        <div class="option-count">{{ totalOrders }}</div>
+                    </div>
+                    <div class="option-item" [class.selected]="selectedFilter === 'pending'"
+                        (click)="selectFilter('pending')">
+                        <i class="fas fa-clock"></i>
+                        <span>Pending</span>
+                        <div class="option-count">{{ pendingCount }}</div>
+                    </div>
+                    <div class="option-item" [class.selected]="selectedFilter === 'accepted'"
+                        (click)="selectFilter('accepted')">
+                        <i class="fas fa-handshake"></i>
+                        <span>Accepted</span>
+                        <div class="option-count">{{ acceptedCount }}</div>
+                    </div>
+                    <div class="option-item" [class.selected]="selectedFilter === 'in_progress'"
+                        (click)="selectFilter('in_progress')">
+                        <i class="fas fa-spinner"></i>
+                        <span>In Progress</span>
+                        <div class="option-count">{{ inProgressCount || 0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+        <div class="error-content">
+            <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <span>{{ error }}</span>
+            <button class="error-close" (click)="clearError()">×</button>
+        </div>
     </div>
 
     <div class="dashboard-content">
-        <div class="dashboard-cards">
-            <div class="card">
-                <h3>Today's Assignments</h3>
-                <p class="card-number">8</p>
-            </div>
-            <div class="card">
-                <h3>Completed Today</h3>
-                <p class="card-number">3</p>
-            </div>
-            <div class="card">
-                <h3>Pending</h3>
-                <p class="card-number">5</p>
-            </div>
-            <div class="card">
-                <h3>Today's Earnings</h3>
-                <p class="card-number">$120</p>
-            </div>
+        <div class="loading-spinner" *ngIf="isLoading">
+            <div class="spinner"></div>
+            <span>Loading orders...</span>
         </div>
 
-        <div class="washer-actions">
-            <h2>Quick Actions</h2>
-            <div class="action-buttons">
-                <button class="btn btn-primary">View Assignments</button>
-                <button class="btn btn-success">Mark Job Complete</button>
-                <button class="btn btn-warning">Report Issue</button>
-                <button class="btn btn-info">Update Status</button>
+        <div class="orders-grid" *ngIf="!isLoading">
+            <div class="empty-state" *ngIf="filteredOrders.length === 0">
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 11H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h4"></path>
+                    <path d="M9 11V9a2 2 0 0 1 2-2h10l-1 1 1 1h-2a2 2 0 0 0-2 2v2"></path>
+                    <path d="M9 11h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H9"></path>
+                </svg>
+                <h3>No orders found</h3>
+                <p>{{ selectedFilter === 'all' ? 'No orders available' : 'No ' + selectedFilter + ' orders found' }}</p>
             </div>
-        </div>
 
-        <div class="recent-jobs">
-            <h2>Recent Jobs</h2>
-            <div class="job-list">
-                <div class="job-item">
-                    <div class="job-info">
-                        <h4>Honda Civic - Full Wash</h4>
-                        <p>Location: 123 Main St</p>
-                        <p>Time: 10:00 AM</p>
+            <div class="order-card" *ngFor="let order of filteredOrders">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>Order #{{ order.id }}</h3>
+                        <div class="order-meta">
+                            <span class="order-type">
+                                <i class="fas" [class.fa-bolt]="order.orderNow" [class.fa-clock]="!order.orderNow"></i>
+                                {{ order.orderNow ? 'Express' : 'Scheduled' }}
+                            </span>
+                            <span class="separator">•</span>
+                            <span class="order-date">{{ order.orderDate | date:'MMM d, y' }}</span>
+                        </div>
                     </div>
-                    <div class="job-status pending">Pending</div>
+                    <span class="status-badge" [ngClass]="'status-' + order.status.toLowerCase()">
+                        <i [class]="getStatusIcon(order.status)"></i>
+                        {{ getStatusDisplayText(order.status) }}
+                    </span>
                 </div>
-                <div class="job-item">
-                    <div class="job-info">
-                        <h4>Toyota Camry - Interior Clean</h4>
-                        <p>Location: 456 Oak Ave</p>
-                        <p>Time: 9:00 AM</p>
+
+                <div class="order-details">
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Customer</span>
+                                <span class="detail-value">User #{{ order.userId }}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Cart ID</span>
+                                <span class="detail-value">#{{ order.cartId }}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Scheduled</span>
+                                <span class="detail-value">{{ order.scheduledDate | date:'MMM d, h:mm a' }}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item" *ngIf="order.paymentUrl">
+                            <div class="detail-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Payment</span>
+                                <span class="detail-value">Available</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="job-status completed">Completed</div>
+                </div>
+
+                <div class="order-footer">
+                    <div class="order-actions">
+                        <button *ngIf="order.status === 'PENDING'" class="action-btn accept-btn"
+                            (click)="onOrderAccepted(order.id!)">
+                            <i class="fas fa-check"></i>
+                            Accept Order
+                        </button>
+                        <button *ngIf="order.status === 'ACCEPTED'" class="action-btn complete-btn"
+                            (click)="onOrderCompleted(order.id!)">
+                            <i class="fas fa-check-circle"></i>
+                            Complete Order
+                        </button>
+                        <button *ngIf="order.status === 'PENDING' || order.status === 'ACCEPTED'"
+                            class="action-btn secondary-btn" (click)="viewOrderDetails(order)">
+                            <i class="fas fa-eye"></i>
+                            View Details
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
