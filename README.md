@@ -111,7 +111,7 @@ This demonstration showcases the complete user experience including:
 - Order tracking and history
 - Profile management features
 
-*Video placeholder: Insert user dashboard demonstration video here*
+https://github.com/user-attachments/assets/4add0a14-4e8f-4a1d-8c0f-ff64bc859a16
 
 ### Admin Dashboard Demo
 Comprehensive overview of administrative capabilities:
@@ -121,7 +121,7 @@ Comprehensive overview of administrative capabilities:
 - Order monitoring and oversight
 - Business intelligence features
 
-*Video placeholder: Insert admin dashboard demonstration video here*
+https://github.com/user-attachments/assets/3aceca04-80e2-488b-b096-66824c8a5921
 
 ### Washer Dashboard Demo
 Complete walkthrough of washer operations:
@@ -131,7 +131,7 @@ Complete walkthrough of washer operations:
 - Schedule management
 - Performance tracking
 
-*Video placeholder: Insert washer dashboard demonstration video here*
+https://github.com/user-attachments/assets/e71e7eb6-9dc1-427e-ba0c-431c66b24afd
 
 ## API Integration
 
