@@ -13,7 +13,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-// import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { WasherDashboardComponent } from './components/washer-dashboard/washer-dashboard.component';
 import { CarsComponent } from './components/cars/cars.component';
@@ -21,6 +20,7 @@ import { CartsComponent } from './components/cart/cart.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { HomeComponent } from './components/home/home.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,7 @@ import { HomeComponent } from './components/home/home.component';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    // DashboardComponent,
+    DashboardComponent,
     AdminDashboardComponent,
     WasherDashboardComponent,
     CarsComponent,

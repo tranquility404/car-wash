@@ -16,10 +16,20 @@ import { OrdersComponent } from './components/orders/orders.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { HomeComponent } from './components/home/home.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
   // Public routes - accessible to everyone
-  { path: 'home', component: HomeComponent },
+  { path: 'dashboard', component: DashboardComponent,
+    children: [
+      { path: 'home', component: HomeComponent },
+      { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+      { path: 'cars', component: CarsComponent, canActivate: [AuthGuard] },
+      { path: 'carts', component: CartsComponent, canActivate: [AuthGuard] },
+      { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
+
+    ]
+   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
@@ -44,10 +54,6 @@ const routes: Routes = [
   },
 
   // Other protected routes - require authentication
-  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'cars', component: CarsComponent, canActivate: [AuthGuard] },
-  { path: 'carts', component: CartsComponent, canActivate: [AuthGuard] },
-  { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
 
   // Default redirect
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -59,34 +65,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-
-
-// import { NgModule } from '@angular/core';
-// import { RouterModule, Routes } from '@angular/router';
-// import { LoginComponent } from './login/login.component';
-// import { RegisterComponent } from './register/register.component';
-// import { HomeComponent } from './home/home.component';
-
-// const routes: Routes = [
-//   { path: '', component: HomeComponent },
-//   { path: 'login', component: LoginComponent },
-//   { path: 'register', component: RegisterComponent }
-// ];
-
-// @NgModule({
-//   imports: [RouterModule.forRoot(routes)],
-//   exports: [RouterModule]
-// })
-// export class AppRoutingModule {}
-
-
-// // import { NgModule } from '@angular/core';
-// // import { RouterModule, Routes } from '@angular/router';
-
-// // const routes: Routes = [];
-
-// // @NgModule({
-// //   imports: [RouterModule.forRoot(routes)],
-// //   exports: [RouterModule]
-// // })
-// // export class AppRoutingModule { }

@@ -1,0 +1,21 @@
+<div class="dashboard" [class.full-width]="!isLoggedIn()">
+  <nav class="sidebar" *ngIf="isLoggedIn()">
+    <div class="logo">
+      <h2>CarWash Pro</h2>
+    </div>
+    <ul class="nav-menu">
+      <li><a routerLink="home" routerLinkActive="active"><i class="fas fa-chart-line"></i> Home</a></li>
+      <li><a routerLink="profile" routerLinkActive="active"><i class="fas fa-user"></i> Profile</a></li>
+      <li><a routerLink="cars" routerLinkActive="active"><i class="fas fa-car"></i> My Cars</a></li>
+      <li><a routerLink="carts" routerLinkActive="active"><i class="fas fa-shopping-cart"></i> Carts</a></li>
+      <li><a routerLink="orders" routerLinkActive="active"><i class="fas fa-box"></i> Orders</a></li>
+    </ul>
+    <div class="logout-section">
+      <button class="logout-btn" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

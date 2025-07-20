@@ -76,21 +76,15 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    // For demo purposes, always return true
-    return true;
+    return true
 
-    // Uncomment the lines below for actual authentication checking
     // const token = this.getToken();
     // return token !== null && token !== '';
   }
 
   hasRole(role: string): boolean {
-    // For demo purposes, let's default to USER role
-    // You can change this to 'ADMIN' or 'WASHER' to test different dashboard views
-    const demoRole = 'USER'; // Change this to test different roles: 'USER', 'ADMIN', 'WASHER'
-    return demoRole === role;
-
-    // Uncomment the lines below for actual role checking
+    return role == "ADMIN"
+    
     // const userRole = this.getRole();
     // return userRole === role;
   }
@@ -98,6 +92,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('user_role');
+    this.router.navigate(['/login']);
   }
 
   redirectBasedOnRole(role: string): void {
