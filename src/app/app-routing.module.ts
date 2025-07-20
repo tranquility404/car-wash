@@ -21,6 +21,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 const routes: Routes = [
   // Public routes - accessible to everyone
   { path: 'dashboard', component: DashboardComponent,
+    canActivate: [RoleGuard],
+    data: {role: 'USER'},
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
